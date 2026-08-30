@@ -1,0 +1,13 @@
+/vendor/
+/node_modules/
+.DS_Store
+*.log
+.vscode/
+.idea/
+
+# macOS
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
