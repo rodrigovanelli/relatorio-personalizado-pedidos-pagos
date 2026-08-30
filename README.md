@@ -28,15 +28,19 @@ flowchart TD
     UC2(("Editar apelido do produto"))
     UC3(("Editar quantidade do produto"))
     UC4(("Baixar PDF da lista"))
+    UC5(("Ocultar/Exibir coluna da lista"))
 
     Admin --> UC1
     Admin --> UC2
     Admin --> UC3
     Admin --> UC4
+    Admin --> UC5
 
     UC2 -.->|"<<include>>"| UC1
     UC3 -.->|"<<include>>"| UC1
     UC4 -.->|"<<include>>"| UC1
+    UC5 -.->|"<<include>>"| UC1
+    UC4 -.->|"<<include>>"| UC5
 ```
 
 ## Status do projeto
