@@ -14,8 +14,8 @@ Em lojas WooCommerce com nomenclatura técnica de produtos (SKUs, variações, n
 ## Funcionalidades planejadas
 
 1. Ícone e página personalizada na barra lateral do admin do WordPress.
-2. Lista de pedidos com status pago/processando, com botão de exportação em PDF.
-3. Colunas: número do pedido, nome do cliente no endereço de entrega, produtos vendidos (com quantidade individual), frete e total do pedido — com totalizadores ao final de cada coluna numérica e opção de remoção de colunas.
+2. Lista de pedidos com status pago/processando, com botão de exportação em PDF — o PDF reflete os apelidos, quantidades e colunas visíveis configurados na tela, não os dados originais do sistema.
+3. Colunas: número do pedido, nome do cliente no endereço de entrega, produtos vendidos (com quantidade individual), frete e total do pedido — com totalizadores ao final de cada coluna numérica e opção de ocultar/exibir colunas.
 4. Edição de apelido por produto (persistente — reutilizado sempre que o produto aparecer novamente na lista).
 5. Edição de quantidade por produto (persistente — reutilizado sempre que o produto aparecer novamente na lista) diretamente na lista.
 
@@ -41,6 +41,55 @@ flowchart TD
     UC4 -.->|"<<include>>"| UC1
     UC5 -.->|"<<include>>"| UC1
     UC4 -.->|"<<include>>"| UC5
+    UC4 -.->|"<<include>>"| UC2
+    UC4 -.->|"<<include>>"| UC3
+```
+
+## Diagrama de Sequência — Visualizar lista de pedidos
+
+```mermaid
+sequenceDiagram
+    actor Admin
+    participant WP as WordPress Admin
+    participant Plugin as Plugin (RelatorioPedidosPagos)
+    participant Woo as WooCommerce (wc_get_orders)
+    participant DB as Banco de Dados (config. salvas)
+
+    Admin->>WP: Acessa página do plugin
+    WP->>Plugin: Chama callback registrado (renderizar_pagina)
+    Plugin->>Woo: wc_get_orders(status: pago/processando)
+    Woo-->>Plugin: Retorna lista de pedidos
+    Plugin->>DB: Busca apelidos/quantidades/visibilidade salvos
+    DB-->>Plugin: Retorna configurações salvas
+    Plugin->>Plugin: Monta estrutura da tabela (aplica apelidos, quantidades, totais)
+    Plugin-->>WP: Retorna HTML renderizado
+    WP-->>Admin: Exibe página com a lista de pedidos
+```
+
+## Diagrama de Sequência — Editar apelido do produto
+
+```mermaid
+sequenceDiagram
+    actor Admin
+    participant JS as Navegador (JS)
+    participant WP as WordPress Admin
+    participant Plugin as Plugin (RelatorioPedidosPagos)
+    participant DB as Banco de Dados (config. salvas)
+
+    Admin->>JS: Clica em "editar" no produto
+    JS-->>Admin: Exibe campo de texto inline para apelido
+    Admin->>JS: Digita apelido (repete para outros produtos, se desejar)
+    Admin->>JS: Clica em "Atualizar página"
+    JS->>WP: Submete formulário (POST com todos os apelidos editados)
+    WP->>Plugin: Chama callback de processamento do formulário
+    Plugin->>DB: Salva cada apelido editado (produto -> apelido)
+    DB-->>Plugin: Confirma gravação
+    Plugin-->>WP: Redireciona (PRG) para a página do relatório
+    WP->>Plugin: Chama callback renderizar_pagina novamente
+    Plugin->>DB: Busca apelidos salvos atualizados
+    DB-->>Plugin: Retorna apelidos
+    Plugin-->>WP: Retorna HTML atualizado com novos apelidos
+    WP-->>Admin: Exibe lista com apelidos atualizados
 ```
 
 ## Status do projeto
