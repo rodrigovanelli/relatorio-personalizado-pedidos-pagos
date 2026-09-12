@@ -66,7 +66,7 @@ sequenceDiagram
     WP-->>Admin: Exibe página com a lista de pedidos
 ```
 
-## Diagrama de Sequência — Editar apelido do produto
+## Diagrama de Sequência — Editar apelido e/ou quantidade do produto
 
 ```mermaid
 sequenceDiagram
@@ -77,19 +77,40 @@ sequenceDiagram
     participant DB as Banco de Dados (config. salvas)
 
     Admin->>JS: Clica em "editar" no produto
-    JS-->>Admin: Exibe campo de texto inline para apelido
-    Admin->>JS: Digita apelido (repete para outros produtos, se desejar)
+    JS-->>Admin: Exibe campos inline (apelido e/ou quantidade)
+    Admin->>JS: Edita apelido e/ou quantidade (repete para outros produtos, se desejar)
     Admin->>JS: Clica em "Atualizar página"
-    JS->>WP: Submete formulário (POST com todos os apelidos editados)
+    JS->>WP: Submete formulário (POST com todas as edições em lote)
     WP->>Plugin: Chama callback de processamento do formulário
-    Plugin->>DB: Salva cada apelido editado (produto -> apelido)
+    Plugin->>DB: Salva cada edição (produto -> apelido e/ou quantidade)
     DB-->>Plugin: Confirma gravação
     Plugin-->>WP: Redireciona (PRG) para a página do relatório
     WP->>Plugin: Chama callback renderizar_pagina novamente
-    Plugin->>DB: Busca apelidos salvos atualizados
-    DB-->>Plugin: Retorna apelidos
-    Plugin-->>WP: Retorna HTML atualizado com novos apelidos
-    WP-->>Admin: Exibe lista com apelidos atualizados
+    Plugin->>DB: Busca apelidos/quantidades salvos atualizados
+    DB-->>Plugin: Retorna configurações atualizadas
+    Plugin-->>WP: Retorna HTML atualizado com apelidos/quantidades
+    WP-->>Admin: Exibe lista com edições atualizadas
+```
+
+## Diagrama de Sequência — Baixar PDF da lista
+
+```mermaid
+sequenceDiagram
+    actor Admin
+    participant WP as WordPress Admin
+    participant Plugin as Plugin (RelatorioPedidosPagos)
+    participant Cache as Transient API (cache temporário)
+    participant PDF as DomPDF
+
+    Admin->>WP: Clica em "Baixar PDF"
+    WP->>Plugin: Chama callback de geração de PDF
+    Plugin->>Cache: Recupera dados já montados da lista (transient)
+    Cache-->>Plugin: Retorna dados (apelidos, quantidades, colunas visíveis)
+    Plugin->>Plugin: Monta HTML da tabela respeitando colunas visíveis
+    Plugin->>PDF: Converte HTML em PDF (DomPDF)
+    PDF-->>Plugin: Retorna arquivo PDF gerado
+    Plugin-->>WP: Envia resposta com headers de download (Content-Type: application/pdf)
+    WP-->>Admin: Navegador inicia o download do arquivo
 ```
 
 ## Status do projeto
