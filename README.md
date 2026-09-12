@@ -54,6 +54,7 @@ sequenceDiagram
     participant Plugin as Plugin (RelatorioPedidosPagos)
     participant Woo as WooCommerce (wc_get_orders)
     participant DB as Banco de Dados (config. salvas)
+    participant Cache as Transient API (cache temporário)
 
     Admin->>WP: Acessa página do plugin
     WP->>Plugin: Chama callback registrado (renderizar_pagina)
@@ -62,6 +63,8 @@ sequenceDiagram
     Plugin->>DB: Busca apelidos/quantidades/visibilidade salvos
     DB-->>Plugin: Retorna configurações salvas
     Plugin->>Plugin: Monta estrutura da tabela (aplica apelidos, quantidades, totais)
+    Plugin->>Cache: Salva dados montados em transient (para uso posterior no PDF)
+    Cache-->>Plugin: Confirma gravação
     Plugin-->>WP: Retorna HTML renderizado
     WP-->>Admin: Exibe página com a lista de pedidos
 ```
