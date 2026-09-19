@@ -116,9 +116,46 @@ sequenceDiagram
     WP-->>Admin: Navegador inicia o download do arquivo
 ```
 
+## Diagrama de Classe
+
+```mermaid
+classDiagram
+    class RelatorioPedidosPagos {
+        +registrar_hooks()
+    }
+    class RelatorioRepository {
+        -option_name string
+        +buscar_apelido(produto_id) string
+        +salvar_apelido(produto_id, apelido)
+        +buscar_quantidade(produto_id) int
+        +salvar_quantidade(produto_id, quantidade)
+        +buscar_visibilidade_colunas() array
+        +salvar_visibilidade_colunas(colunas)
+    }
+    class RelatorioDados {
+        +buscar_pedidos() array
+        +montar_estrutura() array
+        +salvar_cache(dados)
+        +buscar_cache() array
+    }
+    class RelatorioView {
+        +renderizar_tabela(dados) string
+    }
+    class RelatorioPdf {
+        +gerar_pdf(dados) string
+    }
+
+    RelatorioPedidosPagos --> RelatorioDados
+    RelatorioPedidosPagos --> RelatorioView
+    RelatorioPedidosPagos --> RelatorioPdf
+    RelatorioDados --> RelatorioRepository
+    RelatorioPdf --> RelatorioDados
+    RelatorioPdf --> RelatorioView
+```
+
 ## Status do projeto
 
-🚧 Em desenvolvimento — fase de modelagem (diagramas de caso de uso, sequência e classe).
+🚧 Em desenvolvimento — modelagem concluída (caso de uso, sequência e classe); próxima etapa: implementação do código.
 
 ## Stack
 
