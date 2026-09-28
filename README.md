@@ -155,7 +155,15 @@ classDiagram
 
 ## Status do projeto
 
-🚧 Em desenvolvimento — modelagem concluída (caso de uso, sequência e classe); próxima etapa: implementação do código.
+🚧 Em desenvolvimento — modelagem concluída; implementação em andamento.
+
+- [x] Menu na barra lateral do admin com ícone personalizado
+- [x] Lista básica de pedidos (número e cliente)
+- [ ] Produtos, quantidades, frete, total e totalizadores
+- [ ] Apelido do produto
+- [ ] Quantidade do produto
+- [ ] Ocultar/exibir colunas
+- [ ] Exportação em PDF
 
 ## Stack
 
